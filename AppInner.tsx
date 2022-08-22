@@ -11,7 +11,7 @@ import FindId from './src/pages/FindId';
 import FindPassword from './src/pages/FindPassword';
 import {useSelector} from 'react-redux';
 import {RootState} from './src/store/reducer';
-
+//dddd
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
 
