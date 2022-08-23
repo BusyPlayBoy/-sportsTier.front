@@ -5,13 +5,11 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import Home from './src/pages/Home';
 import LogIn from './src/pages/LogIn';
 import Settings from './src/pages/Settings';
-import SignUp_1 from './src/pages/SignUp_1';
-import SignUp_2 from './src/pages/SignUp_2';
+import SignUp from './src/pages/SignUp';
 import FindId from './src/pages/FindId';
 import FindPassword from './src/pages/FindPassword';
 import {useSelector} from 'react-redux';
 import {RootState} from './src/store/reducer';
-//dddd
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -35,18 +33,13 @@ function AppInner() {
       ) : (
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen
-            name="SignIn"
+            name="LogIn"
             component={LogIn}
             options={{title: '로그인'}}
           />
           <Stack.Screen
-            name="SignUp_1"
-            component={SignUp_1}
-            options={{title: '회원가입'}}
-          />
-          <Stack.Screen
-            name="SignUp_2"
-            component={SignUp_2}
+            name="SignUp"
+            component={SignUp}
             options={{title: '회원가입'}}
           />
           <Stack.Screen

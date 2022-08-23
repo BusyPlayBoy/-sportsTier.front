@@ -13,16 +13,16 @@ import {RootStackParamList} from '../../App';
 import DissmissKeyboardView from '../components/DismissKeyboardView';
 import axios, {AxiosError} from 'axios';
 
-type LogInScreenProps = NativeStackScreenProps<RootStackParamList, 'LogIn'>;
+type SignUpScreenProps = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-function SignUp_1({navigation}: LogInScreenProps) {
+function SignUp({navigation}: SignUpScreenProps) {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [checkpw, setCheckpw] = useState();
-  const [name, setName] = useState('');
-  const [ymd, setYmd] = useState();
-  const [region, setRegion] = useState();
+  const [email, setEmail] = useState<String>('');
+  const [password, setPassword] = useState<String>('');
+  const [checkpw, setCheckpw] = useState('');
+  const [name, setName] = useState<String>('');
+  const [ymd, setYmd] = useState('');
+  const [region, setRegion] = useState('');
   const emailRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
   const checkpwRef = useRef<TextInput | null>(null);
@@ -59,7 +59,7 @@ function SignUp_1({navigation}: LogInScreenProps) {
     ) {
       return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
     }
-    if (!/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@^!%*#?&]).{8,15}$/.test(password)) {
+    if (!/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@^!%*#?&]).{8,20}$/.test(password)) {
       return Alert.alert(
         '알림',
         '비밀번호는 영문,숫자,특수문자($@^!%*#?&)를 모두 포함하여 8자 이상 입력해야합니다.',
@@ -67,23 +67,20 @@ function SignUp_1({navigation}: LogInScreenProps) {
     }
     try {
       setLoading(true);
-      const response = await axios.post(
-        '127.0.0.1:3000/account/signup',
-        JSON.stringify({
-          email: email,
-          password: password,
-          nickname: name,
-          allowNotice: false,
-        }),
-      );
-      console.log(response);
+      const response = await axios.post('http://10.0.2.2:3000/account/signup', {
+        email: email,
+        password: password,
+        nickname: name,
+        allowNotice: false,
+      });
+      console.log(response.data);
       Alert.alert('알림', '회원가입 되었습니다');
       navigation.navigate('LogIn');
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
-      console.log(errorResponse);
+      console.log(error);
       if (errorResponse) {
-        // Alert.alert('알림', error);
+        Alert.alert('알림', error);
         console.log(error);
       }
     } finally {
@@ -142,11 +139,10 @@ function SignUp_1({navigation}: LogInScreenProps) {
           placeholder="8~15자 영문, 숫자, 특수기호($@^!%*#?&) 포함"
           value={password}
           onChangeText={onChangePassword}
-          secureTextEntry
+          secureTextEntry={true}
           importantForAutofill="yes"
           autoComplete="password"
           textContentType="password"
-          keyboardType="email-address"
           returnKeyType="next"
           ref={passwordRef}
           onSubmitEditing={() => {
@@ -162,11 +158,10 @@ function SignUp_1({navigation}: LogInScreenProps) {
           placeholder="비밀번호를 입력해주세요"
           value={checkpw}
           onChangeText={onChangeCheckpw}
-          secureTextEntry
+          secureTextEntry={true}
           importantForAutofill="yes"
           autoComplete="password"
           textContentType="password"
-          keyboardType="email-address"
           returnKeyType="next"
           ref={checkpwRef}
           onSubmitEditing={() => {
@@ -184,8 +179,7 @@ function SignUp_1({navigation}: LogInScreenProps) {
           onChangeText={onChangeName}
           importantForAutofill="yes"
           autoComplete="email"
-          textContentType="emailAddress"
-          keyboardType="email-address"
+          textContentType="name"
           returnKeyType="next"
           onSubmitEditing={() => {
             ymdRef?.current?.focus();
@@ -220,7 +214,6 @@ function SignUp_1({navigation}: LogInScreenProps) {
           placeholder="EX) 서울시 종로구, 경기도 분당시 팔달구"
           value={region}
           onChangeText={onChangeRegion}
-          secureTextEntry
           importantForAutofill="yes"
           autoComplete="password"
           textContentType="password"
@@ -228,20 +221,19 @@ function SignUp_1({navigation}: LogInScreenProps) {
           returnKeyType="send"
           onSubmitEditing={onSubmit}
           ref={regionRef}
-          blurOnSubmit={false}
         />
       </View>
       <View style={styles.buttonZone}>
         <Pressable
-          onPress={onSubmit}
           style={
-            !canGoNext
-              ? styles.loginButton
-              : StyleSheet.compose(styles.loginButton, styles.loginButtonActive)
+            canGoNext
+              ? StyleSheet.compose(styles.loginButton, styles.loginButtonActive)
+              : styles.loginButton
           }
-          disabled={!canGoNext || loading}>
+          disabled={!canGoNext || loading}
+          onPress={onSubmit}>
           {loading ? (
-            <ActivityIndicator color="blue" />
+            <ActivityIndicator color="white" />
           ) : (
             <Text style={styles.loginButtonText}>회원가입</Text>
           )}
@@ -317,4 +309,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUp_1;
+export default SignUp;

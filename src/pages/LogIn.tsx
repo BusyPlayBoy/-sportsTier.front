@@ -10,10 +10,13 @@ import {
 } from 'react-native';
 import {RootStackParamList} from '../../App';
 import DissmissKeyboardView from '../components/DismissKeyboardView';
+import { useAppDispatch } from '../store';
 
 type LogInScreenProps = NativeStackScreenProps<RootStackParamList, 'LogIn'>;
 
 function Login({navigation}: LogInScreenProps) {
+  const dispatch = useAppDispatch()
+  const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const emailRef = useRef<TextInput | null>(null);
@@ -26,6 +29,8 @@ function Login({navigation}: LogInScreenProps) {
     if (!password || !password.trim()) {
       return Alert.alert('알림', '비밀번호를 입력해주세요');
     }
+    try {
+    }
     Alert.alert('알림', '로그인 되었습니다');
   }, [email, password]);
 
@@ -36,8 +41,8 @@ function Login({navigation}: LogInScreenProps) {
     setPassword(e);
   }, []);
 
-  const toSignUp_1 = useCallback(() => {
-    navigation.navigate('SignUp_1');
+  const toSignUp = useCallback(() => {
+    navigation.navigate('SignUp');
   }, [navigation]);
   const toFindId = useCallback(() => {
     navigation.navigate('FindId');
@@ -53,7 +58,7 @@ function Login({navigation}: LogInScreenProps) {
         <Text style={styles.title}>RealiTier</Text>
       </View>
       <View style={styles.inputWrapper}>
-        {/* <Text style={styles.label}>이메일</Text> */}
+        <Text style={styles.label}>이메일</Text>
         <TextInput
           style={styles.textInput}
           placeholder="아이디"
@@ -62,27 +67,25 @@ function Login({navigation}: LogInScreenProps) {
           importantForAutofill="yes"
           autoComplete="email"
           textContentType="emailAddress"
-          keyboardType="email-address"
           returnKeyType="next"
+          ref={emailRef}
           onSubmitEditing={() => {
             passwordRef?.current?.focus();
           }}
           blurOnSubmit={false}
-          ref={emailRef}
         />
       </View>
       <View style={styles.inputWrapper}>
-        {/* <Text style={styles.label}>비밀번호</Text> */}
+        <Text style={styles.label}>비밀번호</Text>
         <TextInput
           style={styles.textInput}
           placeholder="비밀번호"
           value={password}
           onChangeText={onChangePassword}
-          secureTextEntry
+          secureTextEntry={true}
           importantForAutofill="yes"
           autoComplete="password"
           textContentType="password"
-          keyboardType="email-address"
           ref={passwordRef}
           onSubmitEditing={onSubmit}
         />
@@ -109,7 +112,7 @@ function Login({navigation}: LogInScreenProps) {
               비밀번호 찾기
             </Text>
             <View style={styles.verticalLine} />
-            <Text onPress={toSignUp_1} style={styles.numbers}>
+            <Text onPress={toSignUp} style={styles.numbers}>
               회원 가입
             </Text>
           </View>

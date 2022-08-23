@@ -9,8 +9,7 @@ export type LoggedInParamList = {
 
 export type RootStackParamList = {
   LogIn: undefined;
-  SignUp_1: undefined;
-  SignUP_2: undefined;
+  SignUp: undefined;
   FindId: undefined;
   FindPassword: undefined;
 };
