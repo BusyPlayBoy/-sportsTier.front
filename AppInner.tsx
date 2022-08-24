@@ -4,8 +4,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import Home from './src/pages/Home';
 import Social from './src/pages/Social';
-import Settings from './src/pages/Settings';
 import MyPage from './src/pages/MyPage';
+import Bowling from './src/pages/Bowling';
 import LogIn from './src/pages/LogIn';
 import SignUp from './src/pages/SignUp';
 import FindId from './src/pages/FindId';
@@ -18,6 +18,7 @@ export type LoggedInParamList = {
   Social: undefined;
   Settings: undefined;
   MyPage: undefined;
+  Bowling: undefined;
 };
 
 export type RootStackParamList = {
@@ -51,6 +52,11 @@ function AppInner() {
             name="MyPage"
             component={MyPage}
             options={{title: 'MyPage'}}
+          />
+          <Stack.Screen
+            name="Bowling"
+            component={Bowling}
+            options={{title: 'Bowling'}}
           />
         </Stack.Navigator>
       ) : (

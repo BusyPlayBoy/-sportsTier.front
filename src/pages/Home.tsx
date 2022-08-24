@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Image} from 'react-native';
 import {useSelector} from 'react-redux';
 import {LoggedInParamList} from '../../AppInner';
@@ -16,6 +16,9 @@ function Home({navigation}: HomeScreenProps) {
   }, [navigation]);
   const toMyPage = useCallback(() => {
     navigation.navigate('MyPage');
+  }, [navigation]);
+  const toBowling = useCallback(() => {
+    navigation.navigate('Bowling');
   }, [navigation]);
 
   return (
@@ -45,7 +48,7 @@ function Home({navigation}: HomeScreenProps) {
       </View>
       <View style={styles.body}>
         <View style={styles.rows}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={toBowling}>
             <Image
               source={require('../assets/bowling.png')}
               style={styles.icon}

@@ -3,7 +3,9 @@ import axios, {AxiosError} from 'axios';
 import React, {useCallback, useRef, useState} from 'react';
 import {
   Alert,
+  Button,
   Pressable,
+  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -14,16 +16,51 @@ import {RootStackParamList} from '../../AppInner';
 import DissmissKeyboardView from '../components/DismissKeyboardView';
 import userSlice from '../slices/user';
 import {useAppDispatch} from '../store';
+import {NaverLogin, getProfile} from '@react-native-seoul/naver-login';
+const androidKeys = {
+  kConsumerKey: 'QfXNXVO8RnqfbPS9x0LR',
+  kConsumerSecret: '6ZGEYZabM9',
+  kServiceAppName: '테스트앱(안드로이드)',
+};
 
 type LogInScreenProps = NativeStackScreenProps<RootStackParamList, 'LogIn'>;
 
 function Login({navigation}: LogInScreenProps) {
+  const [naverToken, setNaverToken] = useState(null);
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState<String>('');
   const [password, setPassword] = useState<String>('');
   const emailRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
+
+  const naverLogin = props => {
+    return new Promise((resolve, reject) => {
+      NaverLogin.login(props, (err, token) => {
+        console.log(`\n\n  Token is fetched  :: ${token} \n\n`);
+        setNaverToken(token);
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(token);
+      });
+    });
+  };
+
+  const naverLogout = () => {
+    NaverLogin.logout();
+    setNaverToken('');
+  };
+
+  const getUserProfile = async () => {
+    const profileResult = await getProfile(naverToken.accessToken);
+    if (profileResult.resultcode === '024') {
+      Alert.alert('로그인 실패', profileResult.message);
+      return;
+    }
+    console.log('profileResult', profileResult);
+  };
 
   const onSubmit = useCallback(async () => {
     if (loading) {
@@ -146,6 +183,20 @@ function Login({navigation}: LogInScreenProps) {
             </Text>
           </View>
         </Pressable>
+        <SafeAreaView style={styles.container}>
+          <Button
+            title="네이버 아이디로 로그인하기"
+            onPress={() => naverLogin(androidKeys)}
+            color="#2DB400"
+          />
+          {!!naverToken && (
+            <Button title="로그아웃하기" onPress={naverLogout} />
+          )}
+
+          {!!naverToken && (
+            <Button title="회원정보 가져오기" onPress={getUserProfile} />
+          )}
+        </SafeAreaView>
       </View>
     </DissmissKeyboardView>
   );
@@ -214,6 +265,12 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
     backgroundColor: '#909090',
+  },
+  container: {
+    flex: 1,
+    marginTop: 20,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
 });
 
