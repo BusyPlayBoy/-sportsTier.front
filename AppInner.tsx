@@ -3,34 +3,60 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import Home from './src/pages/Home';
-import LogIn from './src/pages/LogIn';
+import Social from './src/pages/Social';
 import Settings from './src/pages/Settings';
+import MyPage from './src/pages/MyPage';
+import LogIn from './src/pages/LogIn';
 import SignUp from './src/pages/SignUp';
 import FindId from './src/pages/FindId';
 import FindPassword from './src/pages/FindPassword';
 import {useSelector} from 'react-redux';
 import {RootState} from './src/store/reducer';
+
+export type LoggedInParamList = {
+  Home: undefined;
+  Social: undefined;
+  Settings: undefined;
+  MyPage: undefined;
+};
+
+export type RootStackParamList = {
+  LogIn: undefined;
+  SignUp: undefined;
+  FindId: undefined;
+  FindPassword: undefined;
+};
+
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function AppInner() {
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
+
   return (
     <NavigationContainer>
       {isLoggedIn ? (
-        <Tab.Navigator>
-          <Tab.Screen
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen
             name="Home"
             component={Home}
-            options={{tabBarLabel: '홈'}}
+            options={{title: 'home'}}
           />
-          <Tab.Screen
-            name="Settings"
-            component={Settings}
-            options={{title: '내 정보'}}
+          <Stack.Screen
+            name="Social"
+            component={Social}
+            options={{title: 'Social'}}
           />
-        </Tab.Navigator>
+          <Stack.Screen
+            name="MyPage"
+            component={MyPage}
+            options={{title: 'MyPage'}}
+          />
+        </Stack.Navigator>
       ) : (
+        // <Provider store={store}>
+        //   <Home />
+        // </Provider>
         <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen
             name="LogIn"

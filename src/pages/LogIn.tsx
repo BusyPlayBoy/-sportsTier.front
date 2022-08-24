@@ -1,4 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import axios, {AxiosError} from 'axios';
 import React, {useCallback, useRef, useState} from 'react';
 import {
   Alert,
@@ -8,21 +9,26 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {RootStackParamList} from '../../AppInner';
 import DissmissKeyboardView from '../components/DismissKeyboardView';
-import { useAppDispatch } from '../store';
+import userSlice from '../slices/user';
+import {useAppDispatch} from '../store';
 
 type LogInScreenProps = NativeStackScreenProps<RootStackParamList, 'LogIn'>;
 
 function Login({navigation}: LogInScreenProps) {
-  const dispatch = useAppDispatch()
-  const [loading, setLoading] = useState(false)
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState<String>('');
+  const [password, setPassword] = useState<String>('');
   const emailRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback(async () => {
+    if (loading) {
+      return;
+    }
     if (!email || !email.trim()) {
       return Alert.alert('알림', '이메일을 입력해주세요');
     }
@@ -30,15 +36,38 @@ function Login({navigation}: LogInScreenProps) {
       return Alert.alert('알림', '비밀번호를 입력해주세요');
     }
     try {
+      setLoading(true);
+      const response = await axios.post('http://10.0.2.2:3000/account/login', {
+        email: email,
+        password: password,
+      });
+      Alert.alert('알림', '로그인 되었습니다');
+      dispatch(
+        userSlice.actions.setUser({
+          name: response.data.nickname,
+          email: response.data.email,
+          accessToken: response.data.accessToken,
+        }),
+      );
+      await EncryptedStorage.setItem(
+        'refreshToken',
+        response.data.refreshToken,
+      );
+    } catch (error) {
+      const errorResponse = (error as AxiosError).response;
+      if (errorResponse) {
+        Alert.alert('알림', error);
+      }
+    } finally {
+      setLoading(false);
     }
-    Alert.alert('알림', '로그인 되었습니다');
-  }, [email, password]);
+  }, [email, password, dispatch, loading]);
 
   const onChangeEmail = useCallback(e => {
-    setEmail(e);
+    setEmail(e.trim());
   }, []);
   const onChangePassword = useCallback(e => {
-    setPassword(e);
+    setPassword(e.trim());
   }, []);
 
   const toSignUp = useCallback(() => {
@@ -92,13 +121,13 @@ function Login({navigation}: LogInScreenProps) {
       </View>
       <View style={styles.buttonZone}>
         <Pressable
-          onPress={onSubmit}
           style={
             !canGoNext
               ? styles.loginButton
               : StyleSheet.compose(styles.loginButton, styles.loginButtonActive)
           }
-          disabled={!canGoNext}>
+          disabled={!canGoNext}
+          onPress={onSubmit}>
           <Text style={styles.loginButtonText}>로그인</Text>
         </Pressable>
         <View style={styles.horizontalline} />

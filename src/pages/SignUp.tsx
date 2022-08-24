@@ -9,7 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import DissmissKeyboardView from '../components/DismissKeyboardView';
 import axios, {AxiosError} from 'axios';
 
