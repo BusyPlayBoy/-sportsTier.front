@@ -5,6 +5,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import Home from './src/pages/Home';
 import Social from './src/pages/Social';
 import MyPage from './src/pages/MyPage';
+import Settings from './src/pages/Settings';
 import Bowling from './src/pages/Bowling';
 import LogIn from './src/pages/LogIn';
 import SignUp from './src/pages/SignUp';
@@ -12,6 +13,7 @@ import FindId from './src/pages/FindId';
 import FindPassword from './src/pages/FindPassword';
 import {useSelector} from 'react-redux';
 import {RootState} from './src/store/reducer';
+import Notice from './src/pages/Notice';
 
 export type LoggedInParamList = {
   Home: undefined;
@@ -19,6 +21,7 @@ export type LoggedInParamList = {
   Settings: undefined;
   MyPage: undefined;
   Bowling: undefined;
+  Notice: undefined;
 };
 
 export type RootStackParamList = {
@@ -52,6 +55,16 @@ function AppInner() {
             name="MyPage"
             component={MyPage}
             options={{title: 'MyPage'}}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={Settings}
+            options={{title: 'Settings'}}
+          />
+          <Stack.Screen
+            name="Notice"
+            component={Notice}
+            options={{title: 'Notice'}}
           />
           <Stack.Screen
             name="Bowling"
